@@ -1,10 +1,22 @@
 import { Hono } from 'hono';
 
-// Start a Hono app
+export interface Env {
+  DB: D1Database;
+}
+
 const app = new Hono();
 
-// Setup OpenAPI registry
-app.get('/', (c) => {
+app.get('/', async (c) => {
+  const env = c.env as Env;
+
+  try {
+    const result = await env.DB.prepare('SELECT * FROM painting').all();
+
+    console.log({ result });
+  } catch (error) {
+    console.log('err', error);
+  }
+
   return c.json('Hello world!');
 });
 
